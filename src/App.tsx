@@ -1,7 +1,9 @@
+import AddPost from "./components/AddPost/AddPost.tsx";
+
 function App() {
   return (
-    <div className={"h-[100vh] bg-black"}>
-      <h1 className={"text-3xl font-bold text-green-500"}>Hello</h1>
+    <div className={"h-[100vh] bg-bgDark p-24 font-display"}>
+      <AddPost />
     </div>
   );
 }
