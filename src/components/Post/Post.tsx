@@ -3,17 +3,16 @@ import { BiDotsVertical, BiSave, BiTime } from "react-icons/bi";
 import { useAppSelector, useAppDispatch } from "../../app/hooks.ts";
 import {
   fetchPosts,
-  selectAllPosts,
   selectPostById,
   selectPostIds,
 } from "../../features/post/postsSlice.ts";
-import { useEffect } from "react";
+import React, { useEffect } from "react";
 import { EntityId } from "@reduxjs/toolkit";
-import { Simulate } from "react-dom/test-utils";
-import error = Simulate.error;
 
-let PostExcerpt = ({ postID }: { postID: EntityId }) => {
+const PostExcerpt = React.memo(({ postID }: { postID: EntityId }) => {
   const post = useAppSelector((state) => selectPostById(state, postID));
+
+  if (parseInt(postID as string) > 4) return;
   return (
     <div
       className={
@@ -43,7 +42,7 @@ let PostExcerpt = ({ postID }: { postID: EntityId }) => {
       <p className={"my-3 text-sm font-normal text-white"}>{post?.body}</p>
     </div>
   );
-};
+});
 
 export const Post = () => {
   const dispatch = useAppDispatch();
