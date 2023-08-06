@@ -7,12 +7,13 @@ import {
 } from "react-icons/bi";
 import { AiOutlinePaperClip } from "react-icons/ai";
 import { Icon } from "../shared/Icon.tsx";
+import Button from "../shared/Button.tsx";
 
 const AppPost = () => {
   return (
     <div
       className={
-        "w-full min-w-[420px] max-w-[40%] rounded-md border border-borderGray bg-mainDark p-4"
+        "mx-auto w-full min-w-[420px] max-w-[40%] rounded-md border border-borderGray bg-mainDark p-4"
       }
     >
       {/*  User Avatar  + Input*/}
@@ -53,13 +54,7 @@ const AppPost = () => {
               <p className={"font-medium"}>Draft</p>
             </div>
           </button>
-          <button
-            className={
-              "select-none rounded-md border-[2px] border-borderGray px-8 py-1 font-medium text-white transition hover:bg-borderGray active:bg-mainDark"
-            }
-          >
-            Post
-          </button>
+          <Button>Post</Button>
         </div>
       </div>
     </div>
