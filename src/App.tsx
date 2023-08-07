@@ -6,9 +6,10 @@ import { openModal } from "./features/user/authModalSlice.ts";
 import { useUser } from "./features/user/useUser.tsx";
 
 function App() {
-  const { userDetails } = useUser();
+  const { userDetails, user } = useUser();
 
   console.log(userDetails);
+  console.log("USER", user);
   const dispatch = useAppDispatch();
   return (
     <div className={"h-[100vh] bg-bgDark p-24 font-display"}>
