@@ -13,6 +13,7 @@ import { TimeAgo } from "../shared/TimeAgo";
 const PostExcerpt = React.memo(({ postID }: { postID: EntityId }) => {
   const post = useAppSelector((state) => selectPostById(state, postID));
 
+  if (!post) return null;
   return (
     <div
       className={
@@ -25,11 +26,10 @@ const PostExcerpt = React.memo(({ postID }: { postID: EntityId }) => {
         <div className={"flex items-center gap-[18px]"}>
           <div className={"h-[40px]  w-[40px] rounded-full bg-blue-400"}></div>
           <div>
-            <h1 className={"text-white"}>{post?.userId}</h1>
+            <h1 className={"text-white"}>{post.title}</h1>
             <div className={"flex items-center gap-x-1"}>
               <Icon icon={BiTime} className={"text-textGray"} />
-              <p className={"text-xs text-textGray"}> {post?.created_at}</p>
-              <TimeAgo timestamp={post?.created_at} />
+              <TimeAgo timestamp={post.created_at} />
             </div>
           </div>
         </div>

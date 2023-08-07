@@ -1,7 +1,11 @@
 import { parseISO, formatDistanceToNow } from "date-fns";
 import { utcToZonedTime, format } from "date-fns-tz";
+import React from "react";
 
-export const TimeAgo = ({ timestamp }: { timestamp: string }) => {
+interface TimeAgoProps {
+  timestamp: string;
+}
+export const TimeAgo: React.FC<TimeAgoProps> = ({ timestamp }) => {
   const options = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
   let timeAgo = "";
@@ -20,9 +24,5 @@ export const TimeAgo = ({ timestamp }: { timestamp: string }) => {
     timeAgo = `${timePeriod} ago`;
   }
 
-  return (
-    <span title={timestamp}>
-      &nbsp; <i>{timeAgo}</i>
-    </span>
-  );
+  return <p className={"text-xs text-textGray"}> {timeAgo}</p>;
 };
