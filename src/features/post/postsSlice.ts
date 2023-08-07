@@ -6,10 +6,10 @@ import {
 import { supabase } from "../../libs/supabaseClient.ts";
 
 interface Post {
-  userId: number;
   id: number;
   title: string;
   body: string;
+  created_at: string;
 }
 const postsAdapter = createEntityAdapter<Post>({
   sortComparer: (a, b) => a.id + b.id,
@@ -20,7 +20,14 @@ export const fetchPosts = createAsyncThunk("posts/fetchPosts", async () => {
 
   return data;
 });
+export const addNewPost = createAsyncThunk(
+  "posts/addNewPost",
+  async (initialPost: Post) => {
+    const { error } = await supabase.from("posts").insert(initialPost);
 
+    return initialPost;
+  }
+);
 const initialState = postsAdapter.getInitialState({
   status: "idle",
   error: null,
@@ -42,7 +49,8 @@ const postsSlice = createSlice({
       .addCase(fetchPosts.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.error.message;
-      });
+      })
+      .addCase(addNewPost.fulfilled, postsAdapter.addOne);
   },
 });
 

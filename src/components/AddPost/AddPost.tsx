@@ -8,8 +8,32 @@ import {
 import { AiOutlinePaperClip } from "react-icons/ai";
 import { Icon } from "../shared/Icon.tsx";
 import Button from "../shared/Button.tsx";
+import { useAppDispatch } from "../../app/hooks.ts";
+import { useState } from "react";
+import { addNewPost } from "../../features/post/postsSlice.ts";
 
 const AppPost = () => {
+  const dispatch = useAppDispatch();
+
+  const [addRequestStatus, setAddRequestStatus] = useState("idle");
+  const [content, setContent] = useState("");
+  const onContentChanged = (e: React.ChangeEvent<HTMLInputElement>) =>
+    setContent(e.target.value);
+  const canSave = addRequestStatus === "idle";
+  const onPostClicked = async () => {
+    if (!canSave) return;
+    try {
+      setAddRequestStatus("pending");
+      await dispatch(addNewPost({ body: content, title: "Title" })).unwrap();
+
+      setContent("");
+    } catch (err: any) {
+      console.error("Failed to post");
+    } finally {
+      setAddRequestStatus("idle");
+    }
+  };
+
   return (
     <div
       className={
@@ -22,6 +46,8 @@ const AppPost = () => {
         <input
           type="text"
           placeholder={"What's on your mind?"}
+          value={content}
+          onChange={onContentChanged}
           className={
             "h-[40px] flex-1 select-none rounded-[20px] bg-mainGray px-4 placeholder:text-textGray focus:outline-none"
           }
@@ -54,7 +80,9 @@ const AppPost = () => {
               <p className={"font-medium"}>Draft</p>
             </div>
           </button>
-          <Button>Post</Button>
+          <Button onClick={onPostClicked} disabled={!canSave}>
+            Post
+          </Button>
         </div>
       </div>
     </div>

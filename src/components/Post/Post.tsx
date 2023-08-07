@@ -8,11 +8,11 @@ import {
 } from "../../features/post/postsSlice.ts";
 import React, { useEffect } from "react";
 import { EntityId } from "@reduxjs/toolkit";
+import { TimeAgo } from "../shared/TimeAgo";
 
 const PostExcerpt = React.memo(({ postID }: { postID: EntityId }) => {
   const post = useAppSelector((state) => selectPostById(state, postID));
 
-  if (parseInt(postID as string) > 4) return;
   return (
     <div
       className={
@@ -28,7 +28,8 @@ const PostExcerpt = React.memo(({ postID }: { postID: EntityId }) => {
             <h1 className={"text-white"}>{post?.userId}</h1>
             <div className={"flex items-center gap-x-1"}>
               <Icon icon={BiTime} className={"text-textGray"} />
-              <p className={"text-xs text-textGray"}>12 minutes ago</p>
+              <p className={"text-xs text-textGray"}> {post?.created_at}</p>
+              <TimeAgo timestamp={post?.created_at} />
             </div>
           </div>
         </div>
