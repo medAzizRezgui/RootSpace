@@ -4,15 +4,20 @@ import {
   createSlice,
 } from "@reduxjs/toolkit";
 import { supabase } from "../../libs/supabaseClient.ts";
+import { RootState } from "../../app/store.ts";
 
 interface Post {
+  title: string;
+  body: string;
+}
+interface FetchedPosts extends Post {
   id: number;
   title: string;
   body: string;
   created_at: string;
 }
-const postsAdapter = createEntityAdapter<Post>({
-  sortComparer: (a, b) => a.id + b.id,
+const postsAdapter = createEntityAdapter<FetchedPosts>({
+  sortComparer: (a, b) => b.created_at.localeCompare(a.created_at),
 });
 
 export const fetchPosts = createAsyncThunk("posts/fetchPosts", async () => {
@@ -23,14 +28,14 @@ export const fetchPosts = createAsyncThunk("posts/fetchPosts", async () => {
 export const addNewPost = createAsyncThunk(
   "posts/addNewPost",
   async (initialPost: Post) => {
-    const { error } = await supabase.from("posts").insert(initialPost);
+    const { data } = await supabase.from("posts").insert(initialPost).select();
 
-    return initialPost;
+    return data ? data[0] : initialPost;
   }
 );
 const initialState = postsAdapter.getInitialState({
   status: "idle",
-  error: null,
+  error: "",
 });
 const postsSlice = createSlice({
   name: "posts",
@@ -44,11 +49,11 @@ const postsSlice = createSlice({
       })
       .addCase(fetchPosts.fulfilled, (state, action) => {
         state.status = "succeeded";
-        postsAdapter.upsertMany(state, action.payload);
+        postsAdapter.upsertMany(state, action.payload as FetchedPosts[]);
       })
       .addCase(fetchPosts.rejected, (state, action) => {
         state.status = "failed";
-        state.error = action.error.message;
+        state.error = action.error.message || "";
       })
       .addCase(addNewPost.fulfilled, postsAdapter.addOne);
   },
@@ -59,4 +64,4 @@ export const {
   selectAll: selectAllPosts,
   selectById: selectPostById,
   selectIds: selectPostIds,
-} = postsAdapter.getSelectors((state) => state.posts);
+} = postsAdapter.getSelectors((state: RootState) => state.posts);

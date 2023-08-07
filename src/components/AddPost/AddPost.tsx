@@ -27,7 +27,7 @@ const AppPost = () => {
       await dispatch(addNewPost({ body: content, title: "Title" })).unwrap();
 
       setContent("");
-    } catch (err: any) {
+    } catch (_) {
       console.error("Failed to post");
     } finally {
       setAddRequestStatus("idle");

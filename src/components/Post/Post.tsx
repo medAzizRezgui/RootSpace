@@ -17,7 +17,7 @@ const PostExcerpt = React.memo(({ postID }: { postID: EntityId }) => {
   return (
     <div
       className={
-        "mx-auto w-full min-w-[420px] max-w-[40%] rounded-md border border-borderGray bg-mainDark p-4"
+        "mx-auto my-4 w-full  min-w-[420px] max-w-[40%] rounded-md border border-borderGray bg-mainDark p-4"
       }
     >
       {/*  User*/}
