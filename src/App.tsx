@@ -3,20 +3,13 @@ import Post from "./components/Post/Post.tsx";
 import AuthModal from "./features/user/AuthModal.tsx";
 import { useAppDispatch } from "./app/hooks.ts";
 import { openModal } from "./features/user/authModalSlice.ts";
-import { useUser } from "./features/user/useUser.tsx";
 
 function App() {
-  const { userDetails, user } = useUser();
-
-  console.log(userDetails);
-  console.log("USER", user);
   const dispatch = useAppDispatch();
   return (
     <div className={"h-[100vh] bg-bgDark p-24 font-display"}>
       <AddPost />
       <Post />
-      <h1>{user?.email_confirmed_at}</h1>
-      <h1>{userDetails?.id}</h1>
       <button
         onClick={() => dispatch(openModal())}
         className={"rounded-md bg-green-800 p-4 font-medium text-white"}
