@@ -3,12 +3,13 @@ import {
   useSessionContext,
   useUser as useSupaUser,
 } from "@supabase/auth-helpers-react";
-import { UserDetails } from "../../utils/types/types.ts";
+import { User, UserDetails } from "../../utils/types/types.ts";
 
 type UserContextType = {
   accessToken: string | null;
   userDetails: UserDetails | null;
   isLoading: boolean;
+  user: User | null;
 };
 export const UserContext = createContext<UserContextType | undefined>(
   undefined
@@ -24,7 +25,7 @@ export const MyUserContextProvider = (props: Props) => {
   } = useSessionContext();
 
   const user = useSupaUser();
-  console.log("UUUU", user);
+
   const accessToken = session?.access_token ?? null;
   const [isLoadingData, setIsLoadingData] = useState(false);
   const [userDetails, setUserDetails] = useState<UserDetails | null>(null);

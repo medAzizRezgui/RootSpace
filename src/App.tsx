@@ -15,6 +15,8 @@ function App() {
     <div className={"h-[100vh] bg-bgDark p-24 font-display"}>
       <AddPost />
       <Post />
+      <h1>{user?.email_confirmed_at}</h1>
+      <h1>{userDetails?.id}</h1>
       <button
         onClick={() => dispatch(openModal())}
         className={"rounded-md bg-green-800 p-4 font-medium text-white"}
