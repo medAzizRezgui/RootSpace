@@ -1,14 +1,14 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import App from "./App.tsx";
 import "./styles/index.css";
 import { Provider } from "react-redux";
 import { store } from "./app/store.ts";
-import UserProvider from "./features/user/UserProvider.tsx";
+import UserProvider from "./context/User/UserProvider.tsx";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import SupabaseProvider from "./features/user/SupabaseProvider.tsx";
 import Account from "./pages/account";
 import Header from "./components/shared/Header.tsx";
+import Home from "./pages/home";
 
 const router = createBrowserRouter([
   {
@@ -17,7 +17,7 @@ const router = createBrowserRouter([
     children: [
       {
         path: "/",
-        element: <App />,
+        element: <Home />,
       },
       {
         path: "/account",
