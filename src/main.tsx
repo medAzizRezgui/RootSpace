@@ -6,7 +6,7 @@ import { store } from "./app/store.ts";
 import UserProvider from "./providers/UserProvider.tsx";
 import SupabaseProvider from "./providers/SupabaseProvider.tsx";
 
-import AppRouter from "./components/AppRouter.tsx";
+import AppRouter from "./utils/AppRouter.tsx";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
