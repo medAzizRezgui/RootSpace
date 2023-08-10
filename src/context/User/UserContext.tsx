@@ -1,4 +1,4 @@
-import { createContext, useEffect, useState, useContext } from "react";
+import { createContext, useEffect, useState } from "react";
 import {
   useSessionContext,
   useUser as useSupaUser,
@@ -11,25 +11,29 @@ type UserContextType = {
   isLoading: boolean;
   user: User | null;
 };
+
+// User Context
 export const UserContext = createContext<UserContextType | undefined>(
   undefined
 );
 export interface Props {
   [propName: string]: unknown;
 }
-export const MyUserContextProvider = (props: Props) => {
+export const UserContextProvider = (props: Props) => {
+  // Gets Session details
   const {
     session,
     isLoading: isLoadingUser,
     supabaseClient: supabase,
   } = useSessionContext();
-
+  // Gets the supabase User
   const user = useSupaUser();
 
   const accessToken = session?.access_token ?? null;
   const [isLoadingData, setIsLoadingData] = useState(false);
   const [userDetails, setUserDetails] = useState<UserDetails | null>(null);
 
+  // Gets the user details from supabase
   const getUserDetails = () => supabase.from("profiles").select("*").single();
 
   useEffect(() => {
@@ -57,11 +61,4 @@ export const MyUserContextProvider = (props: Props) => {
   };
 
   return <UserContext.Provider value={value} {...props} />;
-};
-export const useUser = () => {
-  const context = useContext(UserContext);
-  if (context === undefined) {
-    throw new Error("useUser must be used within a MyUserContextProvider");
-  }
-  return context;
 };
