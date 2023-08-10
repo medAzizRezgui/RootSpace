@@ -1,5 +1,5 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Header from "./shared/Header.tsx";
+import Header from "../components/shared/Header.tsx";
 import Home from "../pages/home";
 import Account from "../pages/account";
 import { Protected } from "./Protected.tsx";

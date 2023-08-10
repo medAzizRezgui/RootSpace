@@ -28,7 +28,6 @@ const Auth = () => {
       <AuthUI
         supabaseClient={supabaseClient}
         providers={[]}
-        redirectTo={"/"}
         magicLink
         appearance={{
           theme: ThemeSupa,
