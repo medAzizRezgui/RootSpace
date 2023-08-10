@@ -6,14 +6,13 @@ import {
   BiSmile,
 } from "react-icons/bi";
 import { AiOutlinePaperClip } from "react-icons/ai";
-import { Icon } from "../shared/Icon.tsx";
-import Button from "../shared/Button.tsx";
-import { useAppDispatch } from "../../app/hooks.ts";
+import { Icon } from "../../../shared/Icon.tsx";
+import Button from "../../../shared/Button.tsx";
+import { useAppDispatch } from "../../../../app/hooks.ts";
 import { useState } from "react";
-import { addNewPost } from "../../features/post/postsSlice.ts";
-import { supabase } from "../../libs/supabaseClient.ts";
+import { addNewPost } from "../../../../features/post/postsSlice.ts";
 
-const AppPost = () => {
+export const AddPost = () => {
   const dispatch = useAppDispatch();
 
   const [addRequestStatus, setAddRequestStatus] = useState("idle");
@@ -33,15 +32,6 @@ const AppPost = () => {
     } finally {
       setAddRequestStatus("idle");
     }
-  };
-
-  const SignUp = async () => {
-    const { data, error } = await supabase.auth.signUp({
-      email: "azizrezgui4@gmail.com",
-      password: "aziztotaziz87",
-    });
-
-    console.log("DATA", data, "ERROR", error);
   };
 
   return (
@@ -87,9 +77,7 @@ const AppPost = () => {
           >
             <div className={"flex items-center gap-x-2"}>
               <BiEditAlt size={"18px"} />
-              <p className={"font-medium"} onClick={SignUp}>
-                Draft
-              </p>
+              <p className={"font-medium"}>Draft</p>
             </div>
           </button>
           <Button onClick={onPostClicked} disabled={!canSave}>
@@ -100,5 +88,3 @@ const AppPost = () => {
     </div>
   );
 };
-
-export default AppPost;
