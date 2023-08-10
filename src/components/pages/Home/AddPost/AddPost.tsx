@@ -11,10 +11,11 @@ import Button from "../../../shared/Button.tsx";
 import { useAppDispatch } from "../../../../app/hooks.ts";
 import { useState } from "react";
 import { addNewPost } from "../../../../features/post/postsSlice.ts";
+import { useUser } from "../../../../hooks/useUser.ts";
 
 export const AddPost = () => {
   const dispatch = useAppDispatch();
-
+  const { user } = useUser();
   const [addRequestStatus, setAddRequestStatus] = useState("idle");
   const [content, setContent] = useState("");
   const onContentChanged = (e: React.ChangeEvent<HTMLInputElement>) =>
@@ -34,6 +35,7 @@ export const AddPost = () => {
     }
   };
 
+  if (!user) return null;
   return (
     <div
       className={
