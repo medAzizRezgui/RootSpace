@@ -1,8 +1,9 @@
 export interface UserDetails {
   id: string;
-  username: string;
-  full_name?: string;
-  avatar_url?: string;
+  lastName: string;
+  firstName?: string;
+  avatar_url: string;
+  email?: string;
 }
 export interface UserAppMetadata {
   provider?: string;
