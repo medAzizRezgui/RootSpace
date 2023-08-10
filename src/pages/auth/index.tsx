@@ -1,49 +1,34 @@
 import { useNavigate } from "react-router-dom";
 
-import Modal from "../../components/shared/Modal.tsx";
 import {
   useSessionContext,
   useSupabaseClient,
 } from "@supabase/auth-helpers-react";
-import { Auth } from "@supabase/auth-ui-react";
+import { Auth as AuthUI } from "@supabase/auth-ui-react";
 import { ThemeSupa } from "@supabase/auth-ui-shared";
 import { useEffect } from "react";
-import { useAppDispatch, useAppSelector } from "../../app/hooks.ts";
-import { closeModal } from "./authModalSlice.ts";
 
-const AuthModal = () => {
-  const dispatch = useAppDispatch();
+const Auth = () => {
   const supabaseClient = useSupabaseClient();
 
-  const isOpen = useAppSelector((state) => state.authModalState.isOpen);
   const router = useNavigate();
 
   const handleRefresh = () => {
-    router("", { replace: true });
+    router("/", { replace: true });
   };
   const { session } = useSessionContext();
   useEffect(() => {
     if (session) {
       handleRefresh();
-      dispatch(closeModal());
     }
-  }, [session, router, closeModal]);
+  }, [session, router]);
 
-  const onChange = (open: boolean) => {
-    if (!open) {
-      dispatch(closeModal());
-    }
-  };
   return (
-    <Modal
-      isOpen={isOpen}
-      onChange={onChange}
-      title={"Welcome Back"}
-      description={"Login to your account"}
-    >
-      <Auth
+    <div className={"h-[100vh] w-full bg-bgDark p-24"}>
+      <AuthUI
         supabaseClient={supabaseClient}
         providers={[]}
+        redirectTo={"/"}
         magicLink
         appearance={{
           theme: ThemeSupa,
@@ -57,7 +42,7 @@ const AuthModal = () => {
           },
         }}
       />
-    </Modal>
+    </div>
   );
 };
-export default AuthModal;
+export default Auth;
