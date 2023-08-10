@@ -9,7 +9,7 @@ const Account = () => {
   const dispatch = useAppDispatch();
 
   const supabaseClient = useSupabaseClient();
-  const { user } = useUser();
+  const { user, userDetails } = useUser();
   const router = useNavigate();
 
   const handleRefresh = () => {
@@ -31,7 +31,9 @@ const Account = () => {
       <p className={"font-medium text-white"}>
         {user ? "Logged In" : "Logged Out"}
       </p>
-
+      <p className={"font-medium text-white"}>
+        {userDetails ? userDetails.full_name : "Logged Out"}
+      </p>
       <button
         onClick={() => handleLogout()}
         className={"rounded-md bg-red-500 p-4 text-white"}
