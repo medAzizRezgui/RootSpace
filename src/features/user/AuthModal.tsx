@@ -19,10 +19,9 @@ const AuthModal = () => {
   const router = useNavigate();
 
   const handleRefresh = () => {
-    router("", { replace: true }); // Replace the current URL with the same URL to trigger a refresh
+    router("", { replace: true });
   };
   const { session } = useSessionContext();
-
   useEffect(() => {
     if (session) {
       handleRefresh();
@@ -44,7 +43,7 @@ const AuthModal = () => {
     >
       <Auth
         supabaseClient={supabaseClient}
-        providers={["github"]}
+        providers={[]}
         magicLink
         appearance={{
           theme: ThemeSupa,

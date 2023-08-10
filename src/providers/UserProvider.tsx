@@ -1,4 +1,4 @@
-import { UserContextProvider } from "./UserContext.tsx";
+import { UserContextProvider } from "../context/User/UserContext.tsx";
 
 interface UserProviderProps {
   children: React.ReactNode;

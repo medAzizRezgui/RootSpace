@@ -1,5 +1,5 @@
 import { SessionContextProvider } from "@supabase/auth-helpers-react";
-import { supabase } from "../../libs/supabaseClient.ts";
+import { supabase } from "../libs/supabaseClient.ts";
 
 interface SupabaseProviderProps {
   children: React.ReactNode;
