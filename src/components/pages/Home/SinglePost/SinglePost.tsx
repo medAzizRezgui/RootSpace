@@ -32,5 +32,6 @@ export const SinglePost = () => {
   } else if (postStatus === "failed") {
     content = <div>{error}</div>;
   }
+
   return <div>{content}</div>;
 };

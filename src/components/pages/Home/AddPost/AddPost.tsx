@@ -12,10 +12,12 @@ import { useAppDispatch } from "../../../../app/hooks.ts";
 import { useState } from "react";
 import { addNewPost } from "../../../../features/post/postsSlice.ts";
 import { useUser } from "../../../../hooks/useUser.ts";
+import useLoadImage from "../../../../hooks/useLoadImage.ts";
 
 export const AddPost = () => {
   const dispatch = useAppDispatch();
-  const { user } = useUser();
+  const { user, userDetails } = useUser();
+  const avatarUrl = useLoadImage(userDetails);
   const [addRequestStatus, setAddRequestStatus] = useState("idle");
   const [content, setContent] = useState("");
   const onContentChanged = (e: React.ChangeEvent<HTMLInputElement>) =>
@@ -39,12 +41,18 @@ export const AddPost = () => {
   return (
     <div
       className={
-        "mx-auto w-full min-w-[420px] max-w-[40%] rounded-md border border-borderGray bg-mainDark p-4"
+        " w-full   rounded-md border border-borderGray bg-mainDark p-4"
       }
     >
       {/*  User Avatar  + Input*/}
       <div className={"flex items-center justify-between gap-[18px]"}>
-        <div className={"h-[40px]  w-[40px] rounded-full bg-blue-400"}></div>
+        <div
+          className={
+            "h-[40px] w-[40px]  overflow-hidden rounded-full bg-blue-400"
+          }
+        >
+          <img src={avatarUrl || ""} alt={"profile-img"} />
+        </div>
         <input
           type="text"
           placeholder={"What's on your mind?"}
