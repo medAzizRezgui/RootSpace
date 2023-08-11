@@ -25,7 +25,7 @@ export const AddPost = () => {
     if (!canSave) return;
     try {
       setAddRequestStatus("pending");
-      await dispatch(addNewPost({ body: content, title: "Title" })).unwrap();
+      await dispatch(addNewPost({ body: content })).unwrap();
 
       setContent("");
     } catch (_) {
