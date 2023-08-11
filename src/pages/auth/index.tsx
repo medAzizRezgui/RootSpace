@@ -24,23 +24,34 @@ const Auth = () => {
   }, [session, router]);
 
   return (
-    <div className={"h-[100vh] w-full bg-bgDark p-24"}>
-      <AuthUI
-        supabaseClient={supabaseClient}
-        providers={[]}
-        magicLink
-        appearance={{
-          theme: ThemeSupa,
-          variables: {
-            default: {
-              colors: {
-                brand: "#404039",
-                brandAccent: "#21c55e",
+    <div
+      className={
+        "flex h-[100vh] w-full items-center justify-center bg-bgDark p-24"
+      }
+    >
+      <div className={"w-full max-w-[20%]"}>
+        <h1 className={"text-3xl font-bold text-white"}>Welcome Back!</h1>
+        <AuthUI
+          supabaseClient={supabaseClient}
+          providers={[]}
+          magicLink
+          appearance={{
+            theme: ThemeSupa,
+            variables: {
+              default: {
+                fonts: { bodyFontFamily: "Open Sans" },
+                colors: {
+                  brand: "#2F89FF",
+                  brandAccent: "#FFF",
+                  anchorTextColor: "#FFF",
+                  inputPlaceholder: "#FFF",
+                  inputText: "#FFF",
+                },
               },
             },
-          },
-        }}
-      />
+          }}
+        />
+      </div>
     </div>
   );
 };

@@ -5,6 +5,7 @@ import {
 } from "../../../../features/post/postsSlice.ts";
 import { useEffect } from "react";
 import { SinglePostExcerpt } from "./SinglePostExcerpt.tsx";
+import Loading from "../../../shared/Loading.tsx";
 
 export const SinglePost = () => {
   const dispatch = useAppDispatch();
@@ -23,7 +24,7 @@ export const SinglePost = () => {
 
   let content;
   if (postStatus === "loading") {
-    content = <h1>Loading.....</h1>;
+    content = <Loading />;
   } else if (postStatus === "succeeded") {
     content = posts.map((postID) => (
       <SinglePostExcerpt postID={postID} key={postID} />
