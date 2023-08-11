@@ -25,7 +25,9 @@ export const SinglePostExcerpt = React.memo(
               className={"h-[40px]  w-[40px] rounded-full bg-blue-400"}
             ></div>
             <div>
-              <h1 className={"text-white"}>{post.title}</h1>
+              <h1 className={"text-white"}>
+                {post?.users?.lastName} {post?.users?.firstName}
+              </h1>
               <div className={"flex items-center gap-x-1"}>
                 <Icon icon={BiTime} className={"text-textGray"} />
                 <TimeAgo timestamp={post.created_at} />

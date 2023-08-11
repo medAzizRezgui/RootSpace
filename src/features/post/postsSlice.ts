@@ -7,24 +7,30 @@ import { supabase } from "../../libs/supabaseClient.ts";
 import { RootState } from "../../app/store.ts";
 
 interface Post {
-  title: string;
   body: string;
 }
 interface FetchedPosts extends Post {
-  id: number;
-  title: string;
   body: string;
   created_at: string;
+  id: number;
+  user_id: string;
+  users: {
+    firstName: string;
+    lastName: string;
+  };
 }
 const postsAdapter = createEntityAdapter<FetchedPosts>({
   sortComparer: (a, b) => b.created_at.localeCompare(a.created_at),
 });
 
 export const fetchPosts = createAsyncThunk("posts/fetchPosts", async () => {
-  const { data } = await supabase.from("posts").select();
+  const { data } = await supabase
+    .from("posts")
+    .select(`*, users(firstName,lastName)`);
 
   return data;
 });
+
 export const addNewPost = createAsyncThunk(
   "posts/addNewPost",
   async (initialPost: Post) => {
