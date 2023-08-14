@@ -10,6 +10,9 @@ import { fullName } from "../../utils/fullName.ts";
 import { UserDetails } from "../../utils/types/types.ts";
 
 import { Posts } from "../../components/pages/Home/Posts/Posts.tsx";
+import { ProfileForm } from "../../components/pages/Account/ProfileForm";
+import Modal from "../../components/shared/Modal.tsx";
+import { useState } from "react";
 interface AccountProps {
   userDetails: UserDetails | null;
 }
@@ -23,6 +26,7 @@ const Account: React.FC<AccountProps> = ({ userDetails }) => {
   //   await supabaseClient.auth.signOut();
   //   handleRefresh();
   // };
+  const [openEditModal, setOpenEditModal] = useState(false);
   const avatarUrl = useLoadImage(userDetails);
   return (
     <div
@@ -69,7 +73,7 @@ const Account: React.FC<AccountProps> = ({ userDetails }) => {
 
           <div className={"flex items-center gap-[12px]"}>
             <Button className={"border-blue-500 bg-blue-500"}>Add Post</Button>
-            <Button>Edit Profile</Button>
+            <Button onClick={() => setOpenEditModal(true)}>Edit Profile</Button>
           </div>
         </div>
 
@@ -80,6 +84,14 @@ const Account: React.FC<AccountProps> = ({ userDetails }) => {
           <h1 className={"p-2 text-2xl font-medium"}>Posts</h1>
 
           <Posts />
+          <Modal
+            isOpen={openEditModal}
+            onChange={() => setOpenEditModal(!openEditModal)}
+            title={"Edit Profile"}
+            description={"Change your profile's information"}
+          >
+            <ProfileForm />
+          </Modal>
         </div>
       </div>
     </div>
