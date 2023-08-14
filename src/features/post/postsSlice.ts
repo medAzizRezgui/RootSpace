@@ -32,17 +32,6 @@ export const fetchPosts = createAsyncThunk("posts/fetchPosts", async () => {
   return data;
 });
 
-export const fetchUserPosts = createAsyncThunk(
-  "posts/fetchUserPosts",
-  async (id: string) => {
-    const { data } = await supabase
-      .from("posts")
-      .select(`*, users(firstName,lastName)`)
-      .eq("user_id", id);
-
-    return data;
-  }
-);
 export const addNewPost = createAsyncThunk(
   "posts/addNewPost",
   async (initialPost: Post) => {
@@ -62,10 +51,7 @@ const postsSlice = createSlice({
 
   extraReducers: (builder) => {
     builder
-      .addCase(fetchUserPosts.fulfilled, (state, action) => {
-        state.status = "succeeded";
-        postsAdapter.upsertMany(state, action.payload as FetchedPosts[]);
-      })
+
       .addCase(fetchPosts.pending, (state) => {
         state.status = "loading";
       })

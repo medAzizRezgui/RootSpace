@@ -13,6 +13,7 @@ import { useState } from "react";
 import { addNewPost } from "../../../../features/post/postsSlice.ts";
 import { useUser } from "../../../../hooks/useUser.ts";
 import useLoadImage from "../../../../hooks/useLoadImage.ts";
+import { twMerge } from "tailwind-merge";
 
 export const AddPost = () => {
   const dispatch = useAppDispatch();
@@ -46,12 +47,18 @@ export const AddPost = () => {
     >
       {/*  User Avatar  + Input*/}
       <div className={"flex items-center justify-between gap-[18px]"}>
-        <div
-          className={
-            "h-[40px] w-[40px]  overflow-hidden rounded-full bg-blue-400"
-          }
-        >
-          <img src={avatarUrl || ""} alt={"profile-img"} />
+        <div className={"h-[40px] w-[40px]  overflow-hidden rounded-full "}>
+          <img
+            className={twMerge(
+              `${
+                avatarUrl
+                  ? "opacity-100 transition"
+                  : "opacity-0 transition bg-red-500"
+              }`
+            )}
+            src={avatarUrl || ""}
+            alt={"profile-img"}
+          />
         </div>
         <input
           type="text"

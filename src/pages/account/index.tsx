@@ -7,33 +7,13 @@ import { Icon } from "../../components/shared/Icon.tsx";
 import { AddPost } from "../../components/pages/Home/AddPost";
 import useLoadImage from "../../hooks/useLoadImage.ts";
 import { fullName } from "../../utils/fullName.ts";
-import { User, UserDetails } from "../../utils/types/types.ts";
-import { useAppDispatch, useAppSelector } from "../../app/hooks.ts";
-import {
-  fetchUserPosts,
-  selectPostIds,
-} from "../../features/post/postsSlice.ts";
-import { useEffect } from "react";
+import { UserDetails } from "../../utils/types/types.ts";
+
 import { Posts } from "../../components/pages/Home/Posts/Posts.tsx";
 interface AccountProps {
   userDetails: UserDetails | null;
-  user: User | null;
-  isLoading: boolean;
 }
-const Account: React.FC<AccountProps> = ({ userDetails, user, isLoading }) => {
-  const dispatch = useAppDispatch();
-  const posts = useAppSelector(selectPostIds);
-  const postStatus = useAppSelector((state) => state.posts.status);
-  const error = useAppSelector((state) => state.posts.error);
-  useEffect(() => {
-    if (postStatus === "succeeded" || isLoading) {
-      return;
-    }
-    if (postStatus === "idle") {
-      dispatch(fetchUserPosts(user!.id));
-    }
-  }, [postStatus, dispatch, isLoading]);
-
+const Account: React.FC<AccountProps> = ({ userDetails }) => {
   // const supabaseClient = useSupabaseClient();
   // const router = useNavigate();
   // const handleRefresh = () => {
@@ -44,8 +24,6 @@ const Account: React.FC<AccountProps> = ({ userDetails, user, isLoading }) => {
   //   handleRefresh();
   // };
   const avatarUrl = useLoadImage(userDetails);
-  if (!userDetails) return null;
-
   return (
     <div
       className={
@@ -83,7 +61,7 @@ const Account: React.FC<AccountProps> = ({ userDetails, user, isLoading }) => {
               </h1>
               <p className={"font-medium text-textGray"}>0 Posts</p>
               <p className={"font-medium text-textGray"}>
-                {userDetails.email}{" "}
+                {userDetails?.email}{" "}
               </p>
             </div>
           </div>
@@ -101,7 +79,7 @@ const Account: React.FC<AccountProps> = ({ userDetails, user, isLoading }) => {
           </div>
           <h1 className={"p-2 text-2xl font-medium"}>Posts</h1>
 
-          <Posts postStatus={postStatus} error={error} posts={posts} />
+          <Posts />
         </div>
       </div>
     </div>

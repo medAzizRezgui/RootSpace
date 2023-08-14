@@ -22,11 +22,7 @@ const AppRouter = () => {
             element={
               <Protected isLoading={isLoading} user={user}>
                 <Suspense fallback={<Loading />}>
-                  <LazyAccount
-                    user={user}
-                    isLoading={isLoading}
-                    userDetails={userDetails}
-                  />
+                  <LazyAccount userDetails={userDetails} />
                 </Suspense>
               </Protected>
             }
