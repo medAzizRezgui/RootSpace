@@ -21,8 +21,8 @@ export const ProfileForm = () => {
     defaultValues: {
       firstName: userDetails?.firstName || "",
       lastName: userDetails?.lastName || "",
-      email: "",
-      avatar: [userDetails?.avatar_url] || null,
+      email: userDetails?.email || "",
+      avatar: null,
       edit: !!userDetails?.firstName,
     },
   });
@@ -33,46 +33,46 @@ export const ProfileForm = () => {
   ) => {
     try {
       setIsLoading(true);
-      const avatarFile = values.avatar?.[0];
-      console.log(values);
-      if (!user) {
-        return;
-      }
-      // // Only when using for the first time
-      // if (values.edit) {
-      //   return;
-      // }
-      //
-      // Avatar Upload
+      if (values.edit) {
+        const avatarFile = values.avatar?.[0];
 
-      const { data: avatarData, error: avatarError } =
-        await supabaseClient.storage
-          .from("avatars")
-          .upload(`avatar--${user?.id}`, values.avatar?.[0], {
-            cacheControl: "3600",
-            upsert: true,
-          });
+        if (!user) {
+          return;
+        }
+        let avatarPath = "";
+        // Avatar Upload
+        if (avatarFile) {
+          const { data: avatarData, error: avatarError } =
+            await supabaseClient.storage
+              .from("avatars")
+              .upload(`avatar--${user?.id}`, avatarFile, {
+                cacheControl: "3600",
+                upsert: true,
+              });
+          if (avatarError) {
+            console.log("ERROR", avatarError.message);
+            setIsLoading(false);
+            return;
+          }
+          avatarPath = avatarData?.path;
+        }
 
-      if (avatarError) {
-        console.log("ERROR", avatarError.message);
-        setIsLoading(false);
-      }
+        // User Data
+        const { error: supabaseError } = await supabaseClient
+          .from("users")
+          .update({
+            email: user.email,
+            firstName: values.firstName,
+            lastName: values.lastName,
+            avatar_url: avatarFile ? avatarPath : userDetails?.avatar_url,
+          })
+          .eq("id", user.id);
 
-      // User Data
-      const { error: supabaseError } = await supabaseClient
-        .from("users")
-        .update({
-          email: user.email,
-          firstName: values.firstName,
-          lastName: values.lastName,
-          avatar_url: avatarData?.path,
-        })
-        .eq("id", user.id);
-
-      if (supabaseError) {
-        setIsLoading(false);
-        console.log("ERROR", supabaseError.message);
-        return;
+        if (supabaseError) {
+          setIsLoading(false);
+          console.log("ERROR", supabaseError.message);
+          return;
+        }
       }
       // After everything is done
       setIsLoading(false);
