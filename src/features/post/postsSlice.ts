@@ -9,7 +9,7 @@ import { RootState } from "../../app/store.ts";
 interface Post {
   body: string;
 }
-interface FetchedPosts extends Post {
+export interface FetchedPosts extends Post {
   body: string;
   created_at: string;
   id: number;
@@ -17,6 +17,7 @@ interface FetchedPosts extends Post {
   users: {
     firstName: string;
     lastName: string;
+    avatar_url: string;
   };
 }
 const postsAdapter = createEntityAdapter<FetchedPosts>({
@@ -26,11 +27,22 @@ const postsAdapter = createEntityAdapter<FetchedPosts>({
 export const fetchPosts = createAsyncThunk("posts/fetchPosts", async () => {
   const { data } = await supabase
     .from("posts")
-    .select(`*, users(firstName,lastName)`);
+    .select(`*, users(firstName,lastName,avatar_url)`);
 
   return data;
 });
 
+export const fetchUserPosts = createAsyncThunk(
+  "posts/fetchUserPosts",
+  async (id: string) => {
+    const { data } = await supabase
+      .from("posts")
+      .select(`*, users(firstName,lastName)`)
+      .eq("user_id", id);
+
+    return data;
+  }
+);
 export const addNewPost = createAsyncThunk(
   "posts/addNewPost",
   async (initialPost: Post) => {
@@ -50,6 +62,10 @@ const postsSlice = createSlice({
 
   extraReducers: (builder) => {
     builder
+      .addCase(fetchUserPosts.fulfilled, (state, action) => {
+        state.status = "succeeded";
+        postsAdapter.upsertMany(state, action.payload as FetchedPosts[]);
+      })
       .addCase(fetchPosts.pending, (state) => {
         state.status = "loading";
       })

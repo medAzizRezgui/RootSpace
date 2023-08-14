@@ -5,11 +5,11 @@ import { selectPostById } from "../../../../features/post/postsSlice.ts";
 import { Icon } from "../../../shared/Icon.tsx";
 import { BiDotsVertical, BiSave, BiTime } from "react-icons/bi";
 import { TimeAgo } from "../../../shared/TimeAgo.tsx";
+import { fullName } from "../../../../utils/fullName.ts";
 
 export const SinglePostExcerpt = React.memo(
   ({ postID }: { postID: EntityId }) => {
     const post = useAppSelector((state) => selectPostById(state, postID));
-
     if (!post) return null;
     return (
       <div
@@ -26,7 +26,7 @@ export const SinglePostExcerpt = React.memo(
             ></div>
             <div>
               <h1 className={"text-white"}>
-                {post?.users?.lastName} {post?.users?.firstName}
+                {fullName(post.users.firstName, post.users.lastName)}
               </h1>
               <div className={"flex items-center gap-x-1"}>
                 <Icon icon={BiTime} className={"text-textGray"} />

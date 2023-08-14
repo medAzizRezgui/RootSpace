@@ -1,10 +1,16 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Header from "../components/shared/Header.tsx";
 import Home from "../pages/home";
-import Account from "../pages/account";
+
 import { Protected } from "./Protected.tsx";
 import Auth from "../pages/auth";
+import { useUser } from "../hooks/useUser.ts";
+import { lazy, Suspense } from "react";
+import Loading from "../components/shared/Loading.tsx";
+const LazyAccount = lazy(() => import("../pages/account"));
+
 const AppRouter = () => {
+  const { isLoading, user, userDetails } = useUser();
   return (
     <BrowserRouter>
       <Routes>
@@ -14,8 +20,14 @@ const AppRouter = () => {
           <Route
             path={"/account"}
             element={
-              <Protected>
-                <Account />
+              <Protected isLoading={isLoading} user={user}>
+                <Suspense fallback={<Loading />}>
+                  <LazyAccount
+                    user={user}
+                    isLoading={isLoading}
+                    userDetails={userDetails}
+                  />
+                </Suspense>
               </Protected>
             }
           />
