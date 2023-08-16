@@ -14,7 +14,6 @@ import { addNewPost } from "../../../../features/post/postsSlice.ts";
 import { useUser } from "../../../../hooks/useUser.ts";
 import useLoadImage from "../../../../hooks/useLoadImage.ts";
 import { twMerge } from "tailwind-merge";
-
 export const AddPost = () => {
   const dispatch = useAppDispatch();
   const { user, userDetails } = useUser();
@@ -51,12 +50,10 @@ export const AddPost = () => {
           <img
             className={twMerge(
               `${
-                avatarUrl
-                  ? "opacity-100 transition"
-                  : "opacity-0 transition bg-red-500"
+                avatarUrl ? "opacity-100 transition" : "opacity-50 transition "
               }`
             )}
-            src={avatarUrl || ""}
+            src={avatarUrl}
             alt={"profile-img"}
           />
         </div>

@@ -7,6 +7,7 @@ import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import useLoadImage from "../../../../hooks/useLoadImage.ts";
 import { Icon } from "../../../shared/Icon.tsx";
 import { BiCamera } from "react-icons/bi";
+import { useNavigate } from "react-router-dom";
 interface formDefaultValues {
   firstName: string;
   lastName: string;
@@ -16,6 +17,7 @@ interface formDefaultValues {
 }
 export const ProfileForm = () => {
   const [isLoading, setIsLoading] = useState(false);
+  const router = useNavigate();
   const { user, userDetails } = useUser();
   const { register, reset, handleSubmit } = useForm<formDefaultValues>({
     defaultValues: {
@@ -74,8 +76,50 @@ export const ProfileForm = () => {
           return;
         }
       }
+
+      if (!values.edit) {
+        const avatarFile = values.avatar?.[0];
+
+        if (!user || !avatarFile || !values) {
+          return;
+        }
+
+        const { data: avatarData, error: avatarError } =
+          await supabaseClient.storage
+            .from("avatars")
+            .upload(`avatar--${user?.id}`, avatarFile, {
+              cacheControl: "3600",
+              upsert: false,
+            });
+        if (avatarError) {
+          console.log("ERROR", avatarError.message);
+          setIsLoading(false);
+          return;
+        }
+
+        // User Data
+        const { error: supabaseError } = await supabaseClient
+          .from("users")
+          .update({
+            email: user.email,
+            firstName: values.firstName,
+            lastName: values.lastName,
+            avatar_url: avatarData?.path,
+          })
+          .eq("id", user.id);
+
+        if (supabaseError) {
+          setIsLoading(false);
+          console.log("ERROR", supabaseError.message);
+          return;
+        }
+      }
       // After everything is done
       setIsLoading(false);
+      if (!isLoading) {
+        router("/account", { replace: true });
+      }
+
       reset();
     } catch (e) {
       console.log(e);

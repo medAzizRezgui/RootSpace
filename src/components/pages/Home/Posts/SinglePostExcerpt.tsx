@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { EntityId } from "@reduxjs/toolkit";
 import { useAppSelector } from "../../../../app/hooks.ts";
 import { selectPostById } from "../../../../features/post/postsSlice.ts";
@@ -6,13 +6,36 @@ import { Icon } from "../../../shared/Icon.tsx";
 import { BiDotsVertical, BiSave, BiTime } from "react-icons/bi";
 import { TimeAgo } from "../../../shared/TimeAgo.tsx";
 import { fullName } from "../../../../utils/fullName.ts";
-import useLoadImage from "../../../../hooks/useLoadImage.ts";
 
+import { twMerge } from "tailwind-merge";
+import { useUser } from "../../../../hooks/useUser.ts";
+import { useLocation } from "react-router-dom";
+import { useSupabaseClient } from "@supabase/auth-helpers-react";
 export const SinglePostExcerpt = React.memo(
   ({ postID }: { postID: EntityId }) => {
     const post = useAppSelector((state) => selectPostById(state, postID));
-    const avatarUrl = useLoadImage(post!.users.avatar_url);
-    if (!post) return null;
+    const { user } = useUser();
+    const supabaseClient = useSupabaseClient();
+    const [url, setUrl] = useState("");
+    useEffect(() => {
+      if (post) {
+        const fn = () => {
+          const { data: imageData } = supabaseClient.storage
+            .from("avatars")
+            .getPublicUrl(post?.users.avatar_url);
+          setUrl(imageData.publicUrl);
+        };
+        fn();
+      }
+    }, [post]);
+
+    const location = useLocation();
+    if (location.pathname === "/account") {
+      if (!post || !(user?.id === post.user_id)) return null;
+    } else {
+      if (!post) return null;
+    }
+    console.log(url);
     return (
       <div
         className={
@@ -25,14 +48,18 @@ export const SinglePostExcerpt = React.memo(
           <div className={"flex items-center gap-[18px]"}>
             <div className={"h-[40px]  w-[40px] rounded-full bg-blue-400"}>
               <img
-                src={avatarUrl || ""}
+                src={url}
                 alt={"user-image"}
-                className={"h-[40px] w-[40px] rounded-full object-cover"}
+                className={twMerge(
+                  `h-[40px] w-[40px] rounded-full object-cover${
+                    url ? "opacity-100 transition" : "opacity-50 transition "
+                  }`
+                )}
               />
             </div>
             <div>
               <h1 className={"text-white"}>
-                {fullName(post.users.firstName, post.users.lastName)}
+                {fullName(post?.users.firstName, post?.users.lastName)}
               </h1>
               <div className={"flex items-center gap-x-1"}>
                 <Icon icon={BiTime} className={"text-textGray"} />

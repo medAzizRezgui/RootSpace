@@ -2,31 +2,42 @@
 // import { useNavigate } from "react-router-dom";
 // import { ProfileForm } from "../../components/pages/Account/ProfileForm";
 import Button from "../../components/shared/Button.tsx";
-import { BiCamera } from "react-icons/bi";
-import { Icon } from "../../components/shared/Icon.tsx";
 import { AddPost } from "../../components/pages/Home/AddPost";
 import useLoadImage from "../../hooks/useLoadImage.ts";
 import { fullName } from "../../utils/fullName.ts";
-import { UserDetails } from "../../utils/types/types.ts";
+import { User, UserDetails } from "../../utils/types/types.ts";
 
 import { Posts } from "../../components/pages/Home/Posts/Posts.tsx";
 import { ProfileForm } from "../../components/pages/Account/ProfileForm";
 import Modal from "../../components/shared/Modal.tsx";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useSupabaseClient } from "@supabase/auth-helpers-react";
+import { ProfilePicture } from "../../components/pages/Account/ProfilePicture";
 interface AccountProps {
   userDetails: UserDetails | null;
+  user: User | null;
 }
-const Account: React.FC<AccountProps> = ({ userDetails }) => {
-  // const supabaseClient = useSupabaseClient();
-  // const router = useNavigate();
-  // const handleRefresh = () => {
-  //   router("/", { replace: true });
-  // };
-  // const handleLogout = async () => {
-  //   await supabaseClient.auth.signOut();
-  //   handleRefresh();
-  // };
+const Account: React.FC<AccountProps> = ({ userDetails, user }) => {
+  const supabaseClient = useSupabaseClient();
+  const router = useNavigate();
+  const handleRefresh = () => {
+    router("/", { replace: true });
+  };
+  const handleLogout = async () => {
+    await supabaseClient.auth.signOut();
+    handleRefresh();
+  };
   const [openEditModal, setOpenEditModal] = useState(false);
+  useEffect(() => {
+    const openModal = () => {
+      if (!userDetails?.firstName) {
+        setOpenEditModal(true);
+      }
+    };
+    openModal();
+  }, [userDetails]);
+
   const avatarUrl = useLoadImage(userDetails);
   return (
     <div
@@ -42,23 +53,8 @@ const Account: React.FC<AccountProps> = ({ userDetails }) => {
         >
           {/*PROFILE*/}
           <div className={"flex items-center gap-[12px]"}>
-            <div
-              className={
-                "relative h-[150px]  w-[150px] rounded-full bg-green-400"
-              }
-            >
-              <img
-                alt={"profile-img"}
-                src={avatarUrl || ""}
-                className={"h-[150px] w-[150px] rounded-full object-cover"}
-              />
-              <Icon
-                icon={BiCamera}
-                className={
-                  "absolute bottom-[15%] right-0 rounded-full bg-mainGray p-2 text-4xl"
-                }
-              />
-            </div>
+            {/*Profile Pic*/}
+            <ProfilePicture avatarUrl={avatarUrl} user={user} />
             <div className={"flex flex-col gap-y-2"}>
               <h1 className={"text-3xl font-medium"}>
                 {fullName(userDetails?.firstName, userDetails?.lastName)}
@@ -74,6 +70,7 @@ const Account: React.FC<AccountProps> = ({ userDetails }) => {
           <div className={"flex items-center gap-[12px]"}>
             <Button className={"border-blue-500 bg-blue-500"}>Add Post</Button>
             <Button onClick={() => setOpenEditModal(true)}>Edit Profile</Button>
+            <Button onClick={() => handleLogout()}>Logout</Button>
           </div>
         </div>
 
