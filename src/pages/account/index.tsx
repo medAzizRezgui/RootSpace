@@ -1,12 +1,7 @@
-// import { useSupabaseClient } from "@supabase/auth-helpers-react";
-// import { useNavigate } from "react-router-dom";
-// import { ProfileForm } from "../../components/pages/Account/ProfileForm";
 import Button from "../../components/shared/Button.tsx";
 import { AddPost } from "../../components/pages/Home/AddPost";
 import useLoadImage from "../../hooks/useLoadImage.ts";
-import { fullName } from "../../utils/fullName.ts";
 import { User, UserDetails } from "../../utils/types/types.ts";
-
 import { Posts } from "../../components/pages/Home/Posts/Posts.tsx";
 import { ProfileForm } from "../../components/pages/Account/ProfileForm";
 import Modal from "../../components/shared/Modal.tsx";
@@ -14,6 +9,8 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import { ProfilePicture } from "../../components/pages/Account/ProfilePicture";
+import { ProfileDetails } from "../../components/pages/Account/ProfileDetails";
+
 interface AccountProps {
   userDetails: UserDetails | null;
   user: User | null;
@@ -55,18 +52,10 @@ const Account: React.FC<AccountProps> = ({ userDetails, user }) => {
           <div className={"flex items-center gap-[12px]"}>
             {/*Profile Pic*/}
             <ProfilePicture avatarUrl={avatarUrl} user={user} />
-            <div className={"flex flex-col gap-y-2"}>
-              <h1 className={"text-3xl font-medium"}>
-                {fullName(userDetails?.firstName, userDetails?.lastName)}
-              </h1>
-              <p className={"font-medium text-textGray"}>0 Posts</p>
-              <p className={"font-medium text-textGray"}>
-                {userDetails?.email}{" "}
-              </p>
-            </div>
+            <ProfileDetails userDetails={userDetails} />
           </div>
-          {/*  CTA*/}
 
+          {/*  CTA*/}
           <div className={"flex items-center gap-[12px]"}>
             <Button className={"border-blue-500 bg-blue-500"}>Add Post</Button>
             <Button onClick={() => setOpenEditModal(true)}>Edit Profile</Button>
@@ -78,19 +67,19 @@ const Account: React.FC<AccountProps> = ({ userDetails, user }) => {
           <div className={"p-4"}>
             <AddPost />
           </div>
-          <h1 className={"p-2 text-2xl font-medium"}>Posts</h1>
 
+          <h1 className={"p-2 text-2xl font-medium"}>Posts</h1>
           <Posts />
-          <Modal
-            isOpen={openEditModal}
-            onChange={() => setOpenEditModal(!openEditModal)}
-            title={"Edit Profile"}
-            description={"Change your profile's information"}
-          >
-            <ProfileForm />
-          </Modal>
         </div>
       </div>
+      <Modal
+        isOpen={openEditModal}
+        onChange={() => setOpenEditModal(!openEditModal)}
+        title={"Edit Profile"}
+        description={"Change your profile's information"}
+      >
+        <ProfileForm />
+      </Modal>
     </div>
   );
 };
