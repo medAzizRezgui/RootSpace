@@ -32,7 +32,7 @@ const Modal: React.FC<ModalProps> = ({
           translate-y-[-50%]
           rounded-md
           border-neutral-700
-          bg-neutral-800
+          bg-mainGray
           p-[25px] drop-shadow-md
           focus:outline-none
           md:h-auto
@@ -40,11 +40,13 @@ const Modal: React.FC<ModalProps> = ({
           md:w-[90vw]
           md:max-w-[450px]`}
         >
-          <Dialog.Title className={"mb-4 text-center text-xl font-bold"}>
+          <Dialog.Title
+            className={"mb-2 text-center text-xl font-bold text-white"}
+          >
             {title}
           </Dialog.Title>
           <Dialog.Description
-            className={"mb-5 text-center text-sm leading-normal"}
+            className={"mb-5 text-center text-sm leading-normal text-textGray"}
           >
             {description}
           </Dialog.Description>

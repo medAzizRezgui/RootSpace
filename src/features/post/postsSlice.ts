@@ -9,7 +9,7 @@ import { RootState } from "../../app/store.ts";
 interface Post {
   body: string;
 }
-interface FetchedPosts extends Post {
+export interface FetchedPosts extends Post {
   body: string;
   created_at: string;
   id: number;
@@ -17,6 +17,7 @@ interface FetchedPosts extends Post {
   users: {
     firstName: string;
     lastName: string;
+    avatar_url: string;
   };
 }
 const postsAdapter = createEntityAdapter<FetchedPosts>({
@@ -24,9 +25,10 @@ const postsAdapter = createEntityAdapter<FetchedPosts>({
 });
 
 export const fetchPosts = createAsyncThunk("posts/fetchPosts", async () => {
+  console.log("Hey I fetched Posts");
   const { data } = await supabase
     .from("posts")
-    .select(`*, users(firstName,lastName)`);
+    .select(`*, users(firstName,lastName,avatar_url)`);
 
   return data;
 });
@@ -34,9 +36,14 @@ export const fetchPosts = createAsyncThunk("posts/fetchPosts", async () => {
 export const addNewPost = createAsyncThunk(
   "posts/addNewPost",
   async (initialPost: Post) => {
-    const { data } = await supabase.from("posts").insert(initialPost).select();
+    const { data } = await supabase
+      .from("posts")
+      .insert(initialPost)
+      .select(`*,users(firstName,lastName,avatar_url)`);
 
-    return data ? data[0] : initialPost;
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    return data[0];
   }
 );
 const initialState = postsAdapter.getInitialState({
@@ -50,6 +57,7 @@ const postsSlice = createSlice({
 
   extraReducers: (builder) => {
     builder
+
       .addCase(fetchPosts.pending, (state) => {
         state.status = "loading";
       })
