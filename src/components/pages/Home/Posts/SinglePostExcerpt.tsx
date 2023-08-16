@@ -1,9 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { EntityId } from "@reduxjs/toolkit";
-import { useAppSelector } from "../../../../app/hooks.ts";
-import { selectPostById } from "../../../../features/post/postsSlice.ts";
+import { useAppDispatch, useAppSelector } from "../../../../app/hooks.ts";
+import {
+  addLike,
+  selectPostById,
+} from "../../../../features/post/postsSlice.ts";
 import { Icon } from "../../../shared/Icon.tsx";
-import { BiDotsVertical, BiSave, BiTime } from "react-icons/bi";
+import { BiDotsVertical, BiLike, BiSave, BiTime } from "react-icons/bi";
 import { TimeAgo } from "../../../shared/TimeAgo.tsx";
 import { fullName } from "../../../../utils/fullName.ts";
 
@@ -13,6 +16,7 @@ import { useLocation } from "react-router-dom";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
 export const SinglePostExcerpt = React.memo(
   ({ postID }: { postID: EntityId }) => {
+    const dispatch = useAppDispatch();
     const post = useAppSelector((state) => selectPostById(state, postID));
     const { user } = useUser();
     const supabaseClient = useSupabaseClient();
@@ -36,16 +40,16 @@ export const SinglePostExcerpt = React.memo(
       if (!post) return null;
     }
     console.log(url);
+
     return (
       <div
         className={
-          "mx-auto my-4 w-full  min-w-[420px] max-w-[40%] rounded-md border border-borderGray bg-mainDark p-4"
+          "mx-auto my-4 w-full  min-w-[420px]  rounded-md border border-borderGray bg-mainDark p-4"
         }
       >
-        {/*  User*/}
-
         <div className={"flex items-center justify-between gap-[18px]"}>
           <div className={"flex items-center gap-[18px]"}>
+            {/*  Avatar*/}
             <div className={"h-[40px]  w-[40px] rounded-full bg-blue-400"}>
               <img
                 src={url}
@@ -57,6 +61,8 @@ export const SinglePostExcerpt = React.memo(
                 )}
               />
             </div>
+
+            {/*  Info*/}
             <div>
               <h1 className={"text-white"}>
                 {fullName(post?.users.firstName, post?.users.lastName)}
@@ -67,6 +73,8 @@ export const SinglePostExcerpt = React.memo(
               </div>
             </div>
           </div>
+
+          {/*  CTA*/}
           <div className={"flex items-center gap-x-4"}>
             <Icon icon={BiSave} className={"text-[20px] text-white"} />
             <Icon icon={BiDotsVertical} className={"text-[20px] text-white"} />
@@ -74,6 +82,19 @@ export const SinglePostExcerpt = React.memo(
         </div>
 
         <p className={"my-3 text-sm font-normal text-white"}>{post?.body}</p>
+
+        {/*  Reaction  */}
+
+        <div
+          onClick={() => dispatch(addLike(post?.id))}
+          className={"flex cursor-pointer items-center gap-x-2 text-textGray"}
+        >
+          <BiLike />
+          <p className={"text-sm font-medium"}>Like</p>
+          <p className={"rounded-xl bg-mainGray px-2 text-sm font-medium"}>
+            {post?.likes}
+          </p>
+        </div>
       </div>
     );
   }

@@ -14,6 +14,7 @@ export interface FetchedPosts extends Post {
   created_at: string;
   id: number;
   user_id: string;
+  likes: number;
   users: {
     firstName: string;
     lastName: string;
@@ -46,6 +47,16 @@ export const addNewPost = createAsyncThunk(
     return data[0];
   }
 );
+
+export const addLike = createAsyncThunk(
+  "posts/addLike",
+  async (postId: number) => {
+    const { data } = await supabase.rpc("update_likes", {
+      row_id: postId,
+    });
+    return data;
+  }
+);
 const initialState = postsAdapter.getInitialState({
   status: "idle",
   error: "",
@@ -69,7 +80,8 @@ const postsSlice = createSlice({
         state.status = "failed";
         state.error = action.error.message || "";
       })
-      .addCase(addNewPost.fulfilled, postsAdapter.addOne);
+      .addCase(addNewPost.fulfilled, postsAdapter.addOne)
+      .addCase(addLike.fulfilled, postsAdapter.updateOne);
   },
 });
 
