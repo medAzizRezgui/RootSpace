@@ -39,7 +39,6 @@ export const SinglePostExcerpt = React.memo(
     } else {
       if (!post) return null;
     }
-    console.log(url);
 
     return (
       <div

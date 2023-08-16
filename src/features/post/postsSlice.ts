@@ -51,9 +51,12 @@ export const addNewPost = createAsyncThunk(
 export const addLike = createAsyncThunk(
   "posts/addLike",
   async (postId: number) => {
-    const { data } = await supabase.rpc("update_likes", {
-      row_id: postId,
-    });
+    // const { data } = await supabase.rpc("update_likes", {
+    //   row_id: postId,
+    // });
+    const { data } = await supabase
+      .from("post_likes")
+      .insert({ post_id: postId });
     return data;
   }
 );
@@ -81,7 +84,7 @@ const postsSlice = createSlice({
         state.error = action.error.message || "";
       })
       .addCase(addNewPost.fulfilled, postsAdapter.addOne)
-      .addCase(addLike.fulfilled, postsAdapter.updateOne);
+      .addCase(addLike.fulfilled, () => {});
   },
 });
 

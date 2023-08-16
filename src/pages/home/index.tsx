@@ -5,7 +5,7 @@ import { Posts } from "../../components/pages/Home/Posts/Posts.tsx";
 function Home() {
   return (
     <div className={"h-[100vh] bg-bgDark p-24 font-display"}>
-      <div className={"w-full max-w-[800px] mx-auto"}>
+      <div className={"mx-auto w-full max-w-[800px]"}>
         <AddPost />
         <Posts />
       </div>
