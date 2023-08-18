@@ -1,8 +1,8 @@
 import { fullName } from "../../../../utils/functions.ts";
-import { UserDetails } from "../../../../utils/types/types.ts";
+import { Like, UserDetails } from "../../../../utils/types/types.ts";
 
 interface LikedByStringProps {
-  likeUsers: { users: UserDetails }[];
+  likeUsers: Like[];
   userDetails: UserDetails | null;
   onClick: () => void;
 }
@@ -27,7 +27,9 @@ export const LikedByString = ({
   return (
     <p
       onClick={onClick}
-      className={"cursor-pointer pt-2 text-sm text-textGray underline"}
+      className={
+        "cursor-pointer max-w-min  min-w-[250px] pt-2 text-sm text-textGray underline"
+      }
     >
       Liked By {likeUsers ? testYou() : ""}{" "}
       {likeUsers?.length > 1 ? `and ${likeUsers.length - 1} Other(s)...` : ""}
