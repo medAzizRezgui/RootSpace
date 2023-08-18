@@ -5,31 +5,16 @@ import {
 } from "@reduxjs/toolkit";
 import { supabase } from "../../libs/supabaseClient.ts";
 import { RootState } from "../../app/store.ts";
+import type { FetchedPosts, Post } from "../../utils/types/types.ts";
 
-interface Post {
-  body: string;
-}
-export interface FetchedPosts extends Post {
-  body: string;
-  created_at: string;
-  id: number;
-  user_id: string;
-  likes: number;
-  users: {
-    firstName: string;
-    lastName: string;
-    avatar_url: string;
-  };
-}
 const postsAdapter = createEntityAdapter<FetchedPosts>({
   sortComparer: (a, b) => b.created_at.localeCompare(a.created_at),
 });
 
 export const fetchPosts = createAsyncThunk("posts/fetchPosts", async () => {
-  console.log("Hey I fetched Posts");
   const { data } = await supabase
     .from("posts")
-    .select(`*, users(firstName,lastName,avatar_url)`);
+    .select(`*, users(firstName,lastName,avatar_url),likes(*)`);
 
   return data;
 });
@@ -42,21 +27,43 @@ export const addNewPost = createAsyncThunk(
       .insert(initialPost)
       .select(`*,users(firstName,lastName,avatar_url)`);
 
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    return data[0];
+    return data ? data[0] : [];
   }
 );
 
 export const addLike = createAsyncThunk(
   "posts/addLike",
-  async (postId: number) => {
-    const { data } = await supabase.rpc("update_likes", {
-      row_id: postId,
-    });
-    return data;
+  async ({ postId, user_id }: { postId: number; user_id: string }) => {
+    const likeInsertResult = await supabase
+      .from("likes")
+      .insert({ post_id: postId });
+
+    if (!likeInsertResult.error) {
+      return await fetchPostDataWithLikes(postId);
+    }
+
+    const isDuplicateError = likeInsertResult.error?.message.includes(
+      "duplicate key value violates unique constraint"
+    );
+    if (isDuplicateError) {
+      await supabase
+        .from("likes")
+        .delete()
+        .eq("post_id", postId)
+        .eq("user_id", user_id);
+      return await fetchPostDataWithLikes(postId);
+    }
   }
 );
+
+async function fetchPostDataWithLikes(postId: number) {
+  const { data } = await supabase
+    .from("posts")
+    .select(`*, users(firstName, lastName, avatar_url), likes(*)`)
+    .eq("id", postId);
+
+  return data ? data[0] : [];
+}
 const initialState = postsAdapter.getInitialState({
   status: "idle",
   error: "",
@@ -81,7 +88,7 @@ const postsSlice = createSlice({
         state.error = action.error.message || "";
       })
       .addCase(addNewPost.fulfilled, postsAdapter.addOne)
-      .addCase(addLike.fulfilled, postsAdapter.updateOne);
+      .addCase(addLike.fulfilled, postsAdapter.upsertOne);
   },
 });
 

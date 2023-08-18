@@ -1,5 +1,5 @@
-import { fullName } from "../../../../utils/fullName.ts";
 import { UserDetails } from "../../../../utils/types/types.ts";
+import { fullName } from "../../../../utils/functions.ts";
 
 type ProfileDetailsProps = {
   userDetails: UserDetails | null;

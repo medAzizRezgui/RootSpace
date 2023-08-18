@@ -1,46 +1,63 @@
 import React, { useEffect, useState } from "react";
 import { EntityId } from "@reduxjs/toolkit";
-import { useAppDispatch, useAppSelector } from "../../../../app/hooks.ts";
-import {
-  addLike,
-  selectPostById,
-} from "../../../../features/post/postsSlice.ts";
+import { useAppSelector } from "../../../../app/hooks.ts";
+import { selectPostById } from "../../../../features/post/postsSlice.ts";
 import { Icon } from "../../../shared/Icon.tsx";
-import { BiDotsVertical, BiLike, BiSave, BiTime } from "react-icons/bi";
+import { BiDotsVertical, BiSave, BiTime } from "react-icons/bi";
 import { TimeAgo } from "../../../shared/TimeAgo.tsx";
-import { fullName } from "../../../../utils/fullName.ts";
 
 import { twMerge } from "tailwind-merge";
 import { useUser } from "../../../../hooks/useUser.ts";
 import { useLocation } from "react-router-dom";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
+import { supabase } from "../../../../libs/supabaseClient.ts";
+
+import { LikeButton } from "./LikeButton.tsx";
+import { fullName, isIdInArray } from "../../../../utils/functions.ts";
+import { UserDetails } from "../../../../utils/types/types.ts";
+import Modal from "../../../shared/Modal.tsx";
+import { LikedByString } from "./LikedByString.tsx";
 export const SinglePostExcerpt = React.memo(
   ({ postID }: { postID: EntityId }) => {
-    const dispatch = useAppDispatch();
     const post = useAppSelector((state) => selectPostById(state, postID));
-    const { user } = useUser();
+    const { user, userDetails } = useUser();
+
     const supabaseClient = useSupabaseClient();
     const [url, setUrl] = useState("");
+    const [likeUsers, setLikeUsers] = useState<{ users: UserDetails }[] | null>(
+      null
+    );
     useEffect(() => {
       if (post) {
-        const fn = () => {
+        const getUserAvatarUrl = () => {
           const { data: imageData } = supabaseClient.storage
             .from("avatars")
             .getPublicUrl(post?.users.avatar_url);
           setUrl(imageData.publicUrl);
         };
-        fn();
+        getUserAvatarUrl();
+
+        const getLikeUsers = async () => {
+          const { data } = await supabase
+            .from("likes")
+            .select(`users(*)`)
+            .eq("post_id", post.id);
+
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore
+          setLikeUsers(data);
+        };
+        getLikeUsers();
       }
     }, [post]);
 
+    const [openUsersModal, setOpenUsersModal] = useState(false);
     const location = useLocation();
     if (location.pathname === "/account") {
       if (!post || !(user?.id === post.user_id)) return null;
     } else {
       if (!post) return null;
     }
-    console.log(url);
-
     return (
       <div
         className={
@@ -85,16 +102,34 @@ export const SinglePostExcerpt = React.memo(
 
         {/*  Reaction  */}
 
-        <div
-          onClick={() => dispatch(addLike(post?.id))}
-          className={"flex cursor-pointer items-center gap-x-2 text-textGray"}
-        >
-          <BiLike />
-          <p className={"text-sm font-medium"}>Like</p>
-          <p className={"rounded-xl bg-mainGray px-2 text-sm font-medium"}>
-            {post?.likes}
+        <LikeButton
+          user={user}
+          liked={isIdInArray(user?.id, post?.likes)}
+          post={post}
+        />
+
+        {likeUsers?.length ? (
+          <LikedByString
+            onClick={() => setOpenUsersModal(true)}
+            userDetails={userDetails}
+            likeUsers={likeUsers}
+          />
+        ) : (
+          <p className={"cursor-pointer pt-2 text-sm text-textGray underline"}>
+            Loading...
           </p>
-        </div>
+        )}
+
+        <Modal
+          isOpen={openUsersModal}
+          onChange={() => setOpenUsersModal(!openUsersModal)}
+          title={"Liked By"}
+          description={"Users that liked this post"}
+        >
+          {likeUsers?.map((user) => (
+            <p>{user.users.firstName}</p>
+          ))}
+        </Modal>
       </div>
     );
   }
