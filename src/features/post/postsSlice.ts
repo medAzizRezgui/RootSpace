@@ -34,32 +34,36 @@ export const addNewPost = createAsyncThunk(
 export const addLike = createAsyncThunk(
   "posts/addLike",
   async ({ postId, user_id }: { postId: number; user_id: string }) => {
-    const { error } = await supabase.from("likes").insert({ post_id: postId });
+    const likeInsertResult = await supabase
+      .from("likes")
+      .insert({ post_id: postId });
 
-    if (!error) {
-      const { data } = await supabase
-        .from("posts")
-        .select(`*, users(firstName,lastName,avatar_url),likes(*)`)
-        .eq("id", postId);
-      return data ? data[0] : [];
+    if (!likeInsertResult.error) {
+      return await fetchPostDataWithLikes(postId);
     }
 
-    if (
-      error?.message.includes("duplicate key value violates unique constraint")
-    ) {
+    const isDuplicateError = likeInsertResult.error?.message.includes(
+      "duplicate key value violates unique constraint"
+    );
+    if (isDuplicateError) {
       await supabase
         .from("likes")
         .delete()
         .eq("post_id", postId)
         .eq("user_id", user_id);
-      const { data } = await supabase
-        .from("posts")
-        .select(`*, users(firstName,lastName,avatar_url),likes(*)`)
-        .eq("id", postId);
-      return data ? data[0] : [];
+      return await fetchPostDataWithLikes(postId);
     }
   }
 );
+
+async function fetchPostDataWithLikes(postId: number) {
+  const { data } = await supabase
+    .from("posts")
+    .select(`*, users(firstName, lastName, avatar_url), likes(*)`)
+    .eq("id", postId);
+
+  return data ? data[0] : [];
+}
 const initialState = postsAdapter.getInitialState({
   status: "idle",
   error: "",
