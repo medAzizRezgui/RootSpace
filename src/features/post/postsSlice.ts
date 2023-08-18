@@ -14,10 +14,33 @@ const postsAdapter = createEntityAdapter<FetchedPosts>({
 export const fetchPosts = createAsyncThunk("posts/fetchPosts", async () => {
   const { data } = await supabase
     .from("posts")
-    .select(`*, users(firstName,lastName,avatar_url),likes(*)`);
+    .select(
+      `*, users(firstName,lastName,avatar_url),likes(*,users(*)),comments(*,users(*))`
+    );
 
   return data;
 });
+
+export const addNewComment = createAsyncThunk(
+  "posts/addNewComment",
+  async ({
+    user_id,
+    post_id,
+    body,
+  }: {
+    user_id: string | undefined;
+    post_id: number;
+    body: string;
+  }) => {
+    if (!user_id) return;
+    const { data } = await supabase
+      .from("comments")
+      .insert({ user_id, post_id, body })
+      .select(`*,users(*)`);
+
+    return data ? data[0] : [];
+  }
+);
 
 export const addNewPost = createAsyncThunk(
   "posts/addNewPost",
@@ -25,7 +48,9 @@ export const addNewPost = createAsyncThunk(
     const { data } = await supabase
       .from("posts")
       .insert(initialPost)
-      .select(`*,users(firstName,lastName,avatar_url)`);
+      .select(
+        `*, users(firstName,lastName,avatar_url),likes(*,users(*)),comments(*,users(*))`
+      );
 
     return data ? data[0] : [];
   }
@@ -59,7 +84,7 @@ export const addLike = createAsyncThunk(
 async function fetchPostDataWithLikes(postId: number) {
   const { data } = await supabase
     .from("posts")
-    .select(`*, users(firstName, lastName, avatar_url), likes(*)`)
+    .select(`*, users(firstName, lastName, avatar_url), likes(*,users(*))`)
     .eq("id", postId);
 
   return data ? data[0] : [];
@@ -88,7 +113,19 @@ const postsSlice = createSlice({
         state.error = action.error.message || "";
       })
       .addCase(addNewPost.fulfilled, postsAdapter.addOne)
-      .addCase(addLike.fulfilled, postsAdapter.upsertOne);
+      .addCase(addLike.fulfilled, postsAdapter.upsertOne)
+      .addCase(addNewComment.fulfilled, (state, action) => {
+        state.status = "succeeded";
+        const post = state.entities[action.payload.post_id];
+        if (post) {
+          postsAdapter.updateOne(state, {
+            id: action.payload.post_id,
+            changes: {
+              comments: [...post.comments, action.payload],
+            },
+          });
+        }
+      });
   },
 });
 
