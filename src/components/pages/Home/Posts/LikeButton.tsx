@@ -35,7 +35,7 @@ export const LikeButton = ({ liked, post, user }: LikeButtonProps) => {
           liked ? "text-white bg-blue-500" : " text-textGray bg-mainGray"
         )}
       >
-        {post?.likes.length}
+        {post?.likes ? post.likes.length : "0"}
       </p>
     </div>
   );
