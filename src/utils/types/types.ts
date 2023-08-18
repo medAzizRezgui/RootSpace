@@ -66,3 +66,24 @@ export interface User {
   identities?: UserIdentity[];
   factors?: Factor[];
 }
+export interface Like {
+  created_at: string;
+  id: number;
+  post_id: number;
+  user_id: string;
+}
+export interface Post {
+  body: string;
+}
+export interface FetchedPosts extends Post {
+  body: string;
+  created_at: string;
+  id: number;
+  user_id: string;
+  likes: Like[];
+  users: {
+    firstName: string;
+    lastName: string;
+    avatar_url: string;
+  };
+}
