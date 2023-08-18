@@ -4,7 +4,7 @@ export function isIdInArray<T extends Like>(
   idToCheck: string | undefined,
   array: T[]
 ): boolean {
-  return array.some((obj) => obj.user_id === idToCheck);
+  return array?.some((obj) => obj.user_id === idToCheck);
 }
 function capitalizeFirstLetter(word: string | undefined) {
   if (word) {
