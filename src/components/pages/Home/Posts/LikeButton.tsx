@@ -1,4 +1,4 @@
-import { addLike } from "../../../../features/post/postsSlice.ts";
+import { addLike } from "../../../../features/post/actions.ts";
 import { AiFillLike } from "react-icons/ai";
 import { twMerge } from "tailwind-merge";
 import { FetchedPosts, User } from "../../../../utils/types/types.ts";

@@ -71,9 +71,20 @@ export interface Like {
   id: number;
   post_id: number;
   user_id: string;
+  users: UserDetails;
+}
+
+export interface Comment {
+  body: string;
+  created_at: string;
+  id: number;
+  post_id: number;
+  user_id: string;
+  users: UserDetails;
 }
 export interface Post {
   body: string;
+  img_url?: string;
 }
 export interface FetchedPosts extends Post {
   body: string;
@@ -81,6 +92,7 @@ export interface FetchedPosts extends Post {
   id: number;
   user_id: string;
   likes: Like[];
+  comments: Comment[];
   users: {
     firstName: string;
     lastName: string;

@@ -39,7 +39,7 @@ const Account: React.FC<AccountProps> = ({ userDetails, user }) => {
   return (
     <div
       className={
-        "flex h-[100vh] items-start bg-bgDark p-24 font-display text-white"
+        "flex h-full items-start bg-bgDark p-24 font-display text-white"
       }
     >
       <div className={"mx-auto w-full max-w-[1200px]"}>
