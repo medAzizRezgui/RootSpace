@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { EntityId } from "@reduxjs/toolkit";
-import { useAppSelector } from "../../../../app/hooks.ts";
+import { useAppDispatch, useAppSelector } from "../../../../app/hooks.ts";
 import { selectPostById } from "../../../../features/post/postsSlice.ts";
 import { Icon } from "../../../shared/Icon.tsx";
-import { BiDotsVertical, BiSave, BiTime } from "react-icons/bi";
+import { BiTime, BiTrash } from "react-icons/bi";
 import { TimeAgo } from "../../../shared/TimeAgo.tsx";
-
-import { twMerge } from "tailwind-merge";
+import { deletePost } from "../../../../features/post/actions.ts";
 import { useUser } from "../../../../hooks/useUser.ts";
 import { useLocation } from "react-router-dom";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
@@ -17,15 +16,15 @@ import Modal from "../../../shared/Modal.tsx";
 import { LikedByString } from "./LikedByString.tsx";
 import { Comments } from "./Comments";
 import { CommentButton } from "./CommentButton.tsx";
+import { Avatar } from "../../../shared/Avatar.tsx";
 export const SinglePostExcerpt = React.memo(
   ({ postID }: { postID: EntityId }) => {
     const post = useAppSelector((state) => selectPostById(state, postID));
     const { user, userDetails } = useUser();
-
     const supabaseClient = useSupabaseClient();
     const [url, setUrl] = useState("");
     const [postImgUrl, setPostImgUrl] = useState("");
-
+    const dispatch = useAppDispatch();
     useEffect(() => {
       if (post) {
         const getUserAvatarUrl = () => {
@@ -66,18 +65,7 @@ export const SinglePostExcerpt = React.memo(
           <div className={"flex items-center justify-between gap-[18px]"}>
             <div className={"flex items-center gap-[18px]"}>
               {/*  Avatar*/}
-              <div className={"h-[40px]  w-[40px] rounded-full bg-blue-400"}>
-                <img
-                  src={url}
-                  alt={"user-image"}
-                  className={twMerge(
-                    `h-[40px] w-[40px] rounded-full object-cover${
-                      url ? "opacity-100 transition" : "opacity-50 transition "
-                    }`
-                  )}
-                />
-              </div>
-
+              <Avatar url={url} size={"40"} />
               {/*  Info*/}
               <div>
                 <h1 className={"text-white"}>
@@ -92,11 +80,13 @@ export const SinglePostExcerpt = React.memo(
 
             {/*  CTA*/}
             <div className={"flex items-center gap-x-4"}>
-              <Icon icon={BiSave} className={"text-[20px] text-white"} />
-              <Icon
-                icon={BiDotsVertical}
-                className={"text-[20px] text-white"}
-              />
+              {user?.id === post.user_id && (
+                <Icon
+                  onClick={() => dispatch(deletePost(post?.id))}
+                  icon={BiTrash}
+                  className={"text-[20px] text-white"}
+                />
+              )}
             </div>
           </div>
 
@@ -106,7 +96,7 @@ export const SinglePostExcerpt = React.memo(
             <img
               src={postImgUrl}
               alt={"pic"}
-              className={"w-full mb-8 rounded-md"}
+              className={"mb-8 w-full rounded-md"}
             />
           )}
 
@@ -138,7 +128,9 @@ export const SinglePostExcerpt = React.memo(
           description={"Users that liked this post"}
         >
           {post.likes?.map((user) => (
-            <p>{user.users.firstName}</p>
+            <p className={"text-sm font-medium text-white"}>
+              {fullName(user.users.firstName, user.users.lastName)}
+            </p>
           ))}
         </Modal>
       </div>
