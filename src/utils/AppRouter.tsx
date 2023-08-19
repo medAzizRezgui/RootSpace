@@ -7,6 +7,8 @@ import Auth from "../pages/auth";
 import { useUser } from "../hooks/useUser.ts";
 import { lazy, Suspense } from "react";
 import Loading from "../components/shared/Loading.tsx";
+
+import UserPage from "../pages/user";
 const LazyAccount = lazy(() => import("../pages/account"));
 
 const AppRouter = () => {
@@ -17,6 +19,12 @@ const AppRouter = () => {
         <Route path={"/"} element={<Header />}>
           <Route path={"/"} element={<Home />} />
           <Route path={"/auth"} element={<Auth />} />
+          <Route path={"users"}>
+            <Route
+              path={":userId"}
+              element={<UserPage userDetails={userDetails} user={user} />}
+            />
+          </Route>
           <Route
             path={"/account"}
             element={

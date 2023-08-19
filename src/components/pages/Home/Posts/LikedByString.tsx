@@ -28,7 +28,7 @@ export const LikedByString = ({
     <p
       onClick={onClick}
       className={
-        "cursor-pointer max-w-min  min-w-[250px] pt-2 text-sm text-textGray underline"
+        "cursor-pointer max-w-min  min-w-[350px] pt-2 text-sm text-textGray underline"
       }
     >
       Liked By {likeUsers ? testYou() : ""}{" "}

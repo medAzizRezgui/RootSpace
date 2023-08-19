@@ -7,7 +7,7 @@ import { BiTime, BiTrash } from "react-icons/bi";
 import { TimeAgo } from "../../../shared/TimeAgo.tsx";
 import { deletePost } from "../../../../features/post/actions.ts";
 import { useUser } from "../../../../hooks/useUser.ts";
-import { useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
 
 import { LikeButton } from "./LikeButton.tsx";
@@ -25,6 +25,8 @@ export const SinglePostExcerpt = React.memo(
     const [url, setUrl] = useState("");
     const [postImgUrl, setPostImgUrl] = useState("");
     const dispatch = useAppDispatch();
+    const { userId } = useParams();
+    // This will load the user profile image
     useEffect(() => {
       if (post) {
         const getUserAvatarUrl = () => {
@@ -34,6 +36,12 @@ export const SinglePostExcerpt = React.memo(
           setUrl(imageData.publicUrl);
         };
         getUserAvatarUrl();
+      }
+    }, [post]);
+    const router = useNavigate();
+    // This will load the post image
+    useEffect(() => {
+      if (post) {
         const getPostImgUrl = () => {
           if (!post.img_url) {
             setPostImgUrl("");
@@ -47,14 +55,18 @@ export const SinglePostExcerpt = React.memo(
         getPostImgUrl();
       }
     }, [post]);
-
     const [openUsersModal, setOpenUsersModal] = useState(false);
     const location = useLocation();
+    console.log(location.pathname);
     if (location.pathname === "/account") {
       if (!post || !(user?.id === post.user_id)) return null;
-    } else {
-      if (!post) return null;
+    } else if (location.pathname.includes("users")) {
+      if (userId === userDetails?.id) {
+        router("/account", { replace: true });
+      }
+      if (!post || !(userId === post.user_id)) return null;
     }
+    if (!post) return null;
     return (
       <div
         className={
@@ -63,20 +75,22 @@ export const SinglePostExcerpt = React.memo(
       >
         <div className={"p-4"}>
           <div className={"flex items-center justify-between gap-[18px]"}>
-            <div className={"flex items-center gap-[18px]"}>
-              {/*  Avatar*/}
-              <Avatar url={url} size={"40"} />
-              {/*  Info*/}
-              <div>
-                <h1 className={"text-white"}>
-                  {fullName(post?.users.firstName, post?.users.lastName)}
-                </h1>
-                <div className={"flex items-center gap-x-1"}>
-                  <Icon icon={BiTime} className={"text-textGray"} />
-                  <TimeAgo timestamp={post.created_at} />
+            <Link to={`/users/${post.user_id}`}>
+              <div className={"flex cursor-pointer items-center gap-[18px]"}>
+                {/*  Avatar*/}
+                <Avatar url={url} size={"40"} />
+                {/*  Info*/}
+                <div>
+                  <h1 className={"text-white"}>
+                    {fullName(post?.users.firstName, post?.users.lastName)}
+                  </h1>
+                  <div className={"flex items-center gap-x-1"}>
+                    <Icon icon={BiTime} className={"text-textGray"} />
+                    <TimeAgo timestamp={post.created_at} />
+                  </div>
                 </div>
               </div>
-            </div>
+            </Link>
 
             {/*  CTA*/}
             <div className={"flex items-center gap-x-4"}>

@@ -8,6 +8,7 @@ import { BiTrash } from "react-icons/bi";
 import { useAppDispatch } from "../../../../../app/hooks.ts";
 import { deleteComment } from "../../../../../features/post/actions.ts";
 import { useUser } from "../../../../../hooks/useUser.ts";
+import { Link } from "react-router-dom";
 
 interface SingleCommentProps {
   comment: Comment;
@@ -18,7 +19,10 @@ export const SingleComment = ({ comment }: SingleCommentProps) => {
   return (
     <div className={"flex items-start gap-x-4  border-borderGray  px-4 py-2"}>
       {/* eslint-disable-next-line react-hooks/rules-of-hooks */}
-      <Avatar url={useLoadImage(comment.users)} size={"35"} />
+
+      <Link to={`/users/${comment.user_id}`}>
+        <Avatar url={useLoadImage(comment.users)} size={"35"} />
+      </Link>
 
       <p className={"text-sm font-medium text-textGray"}>
         <span className={"font-medium text-white"}>
