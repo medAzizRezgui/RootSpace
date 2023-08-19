@@ -1,11 +1,9 @@
 import { SinglePostExcerpt } from "./SinglePostExcerpt.tsx";
 import Loading from "../../../shared/Loading.tsx";
 import { useAppDispatch, useAppSelector } from "../../../../app/hooks.ts";
-import {
-  fetchPosts,
-  selectPostIds,
-} from "../../../../features/post/postsSlice.ts";
+import { selectPostIds } from "../../../../features/post/postsSlice.ts";
 import { useEffect } from "react";
+import { fetchPosts } from "../../../../features/post/actions.ts";
 
 export const Posts = () => {
   const dispatch = useAppDispatch();
