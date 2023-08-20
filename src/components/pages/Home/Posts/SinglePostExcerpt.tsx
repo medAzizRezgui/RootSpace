@@ -57,7 +57,6 @@ export const SinglePostExcerpt = React.memo(
     }, [post]);
     const [openUsersModal, setOpenUsersModal] = useState(false);
     const location = useLocation();
-    console.log(location.pathname);
     if (location.pathname === "/account") {
       if (!post || !(user?.id === post.user_id)) return null;
     } else if (location.pathname.includes("users")) {
