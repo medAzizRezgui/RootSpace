@@ -57,8 +57,12 @@ const Account: React.FC<AccountProps> = ({ userDetails, user }) => {
 
           {/*  CTA*/}
           <div className={"flex items-center gap-[12px]"}>
-            <Button className={"border-blue-500 bg-blue-500"}>Add Post</Button>
-            <Button onClick={() => setOpenEditModal(true)}>Edit Profile</Button>
+            <Button
+              className={"border-blue-500 bg-blue-500"}
+              onClick={() => setOpenEditModal(true)}
+            >
+              Edit Profile
+            </Button>
             <Button onClick={() => handleLogout()}>Logout</Button>
           </div>
         </div>
