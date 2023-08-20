@@ -45,7 +45,7 @@ export const addLike = createAsyncThunk(
       .insert({ post_id: postId });
 
     if (!likeInsertResult.error) {
-      return await fetchPostDataWithLikes(postId);
+      return await fetchPostDataWithLikes(postId, true);
     }
 
     const isDuplicateError = likeInsertResult.error?.message.includes(
@@ -57,17 +57,23 @@ export const addLike = createAsyncThunk(
         .delete()
         .eq("post_id", postId)
         .eq("user_id", user_id);
-      return await fetchPostDataWithLikes(postId);
+      return await fetchPostDataWithLikes(postId, false);
     }
   }
 );
 
-async function fetchPostDataWithLikes(postId: number) {
+async function fetchPostDataWithLikes(postId: number, dub?: boolean) {
   const { data } = await supabase
     .from("posts")
     .select(`*, users(firstName, lastName, avatar_url), likes(*,users(*))`)
     .eq("id", postId);
 
+  if (data && dub) {
+    await supabase.from("notifications").insert({
+      type: "like",
+      receiver_id: data[0].user_id,
+    });
+  }
   return data ? data[0] : [];
 }
 export const addNewComment = createAsyncThunk(
@@ -85,8 +91,12 @@ export const addNewComment = createAsyncThunk(
     const { data } = await supabase
       .from("comments")
       .insert({ user_id, post_id, body })
-      .select(`*,users(*)`);
-
+      .select(`*,users(*),posts(user_id)`);
+    if (data) {
+      await supabase
+        .from("notifications")
+        .insert({ type: "comment", receiver_id: data[0].posts.user_id });
+    }
     return data ? data[0] : [];
   }
 );
