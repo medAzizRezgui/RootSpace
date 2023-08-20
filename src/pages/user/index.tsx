@@ -1,5 +1,3 @@
-import Button from "../../components/shared/Button.tsx";
-
 import useLoadImage from "../../hooks/useLoadImage.ts";
 
 import { Posts } from "../../components/pages/Home/Posts/Posts.tsx";
@@ -52,12 +50,6 @@ const UserPage = () => {
           </div>
 
           {/*  CTA*/}
-          <div className={"flex items-center gap-[12px]"}>
-            <Button className={"border-blue-500 bg-blue-500"}>
-              Add Friend
-            </Button>
-            <Button onClick={() => {}}>Message</Button>
-          </div>
         </div>
 
         <div>
