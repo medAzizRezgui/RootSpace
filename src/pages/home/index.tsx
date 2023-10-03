@@ -1,7 +1,7 @@
 import { AddPost } from "../../components/pages/Home/AddPost";
 
 import { Posts } from "../../components/pages/Home/Posts/Posts.tsx";
-import { Friends } from "../../components/pages/Home/Friends";
+// import { Friends } from "../../components/pages/Home/Friends";
 
 function Home() {
   return (
@@ -14,7 +14,7 @@ function Home() {
         <AddPost />
         <Posts />
       </div>
-      <Friends />
+      {/*<Friends />*/}
     </div>
   );
 }
