@@ -1,1 +1,1 @@
-export { SinglePost } from "./Posts.tsx";
+export { Posts } from "./Posts.tsx";
